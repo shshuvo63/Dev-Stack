@@ -59,6 +59,7 @@ export default function TechStackBuilder() {
   const selectedStackRef = useRef<TechItem[]>(selectedStack);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -89,7 +90,13 @@ export default function TechStackBuilder() {
 
     void loadTechData();
     return () => controller.abort();
-  }, []);
+  }, [loadAttempt]);
+
+  const handleRetryLoad = () => {
+    setError(null);
+    setIsLoading(true);
+    setLoadAttempt((attempt) => attempt + 1);
+  };
 
   const handleAddToStack = (tech: TechItem) => {
     if (selectedStackRef.current.some((item) => item.id === tech.id)) {
@@ -144,7 +151,16 @@ export default function TechStackBuilder() {
             {isLoading ? (
               <p className="text-slate-500">Loading technologies...</p>
             ) : error ? (
-              <p role="alert" className="text-rose-600">{error}</p>
+              <div className="text-rose-600">
+                <p role="alert">{error}</p>
+                <button
+                  className="mt-2 rounded-md border border-rose-200 px-3 py-1.5 text-sm font-medium hover:bg-rose-50"
+                  type="button"
+                  onClick={handleRetryLoad}
+                >
+                  Try again
+                </button>
+              </div>
             ) : techData.map((tech) => {
               const isInStack = selectedStack.some((item) => item.id === tech.id);
 
