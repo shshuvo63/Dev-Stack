@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Nav = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeLink, setActiveLink] = useState(window.location.hash || "#home");
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
     const navLinks = [
         { label: "Home", href: "#home" },
         { label: "Technologies", href: "#technologies" },
@@ -20,10 +21,25 @@ const Nav = () => {
         return () => window.removeEventListener("hashchange", updateActiveLink);
     }, []);
 
+    useEffect(() => {
+        if (!isMenuOpen) return;
+
+        const handleMenuKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setIsMenuOpen(false);
+                menuButtonRef.current?.focus();
+            }
+        };
+
+        document.addEventListener("keydown", handleMenuKeyDown);
+        return () => document.removeEventListener("keydown", handleMenuKeyDown);
+    }, [isMenuOpen]);
+
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white">
             <div className="relative mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4">
                 <button
+                    ref={menuButtonRef}
                     className="inline-flex h-9 w-9 items-center justify-center text-slate-700 md:hidden"
                     type="button"
                     aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
