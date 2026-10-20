@@ -34,6 +34,22 @@ npm run lint
 
 Technology data is stored in [`public/data.json`](./public/data.json) and fetched by the app at runtime.
 
+## Project Structure
+
+```text
+public/
+  data.json            Technology catalog loaded by the app
+src/
+  components/
+    Banner.tsx         Hero section
+    Footer.tsx         Footer and section links
+    Nav.tsx            Sticky responsive navigation
+    TechCard.tsx       Technology cards and stack controls
+  App.tsx              Main page composition
+  index.css            Global styles and shared brand gradient
+  main.tsx             React entry point and toast notifications
+```
+
 ## React Questions
 
 ### 1. What is JSX, and why is it used in React?
