@@ -35,10 +35,28 @@ function isTechItem(value: unknown): value is TechItem {
   );
 }
 
+function getSavedStack(): TechItem[] {
+  const savedStack = localStorage.getItem('dev-stack');
+  if (!savedStack) return [];
+
+  try {
+    const parsedStack: unknown = JSON.parse(savedStack);
+    if (Array.isArray(parsedStack) && parsedStack.every(isTechItem)) {
+      return parsedStack;
+    }
+    console.error('Saved technology stack has an invalid format.');
+  } catch (loadError) {
+    console.error('Failed to parse saved technology stack.', loadError);
+  }
+
+  localStorage.removeItem('dev-stack');
+  return [];
+}
+
 export default function TechStackBuilder() {
   const [techData, setTechData] = useState<TechItem[]>([]);
-  const [selectedStack, setSelectedStack] = useState<TechItem[]>([]);
-  const selectedStackRef = useRef<TechItem[]>([]);
+  const [selectedStack, setSelectedStack] = useState<TechItem[]>(getSavedStack);
+  const selectedStackRef = useRef<TechItem[]>(selectedStack);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -80,6 +98,7 @@ export default function TechStackBuilder() {
     }
 
     const nextStack = [...selectedStackRef.current, tech];
+    localStorage.setItem('dev-stack', JSON.stringify(nextStack));
     selectedStackRef.current = nextStack;
     setSelectedStack(nextStack);
     toast.success(`${tech.name} added to your stack.`);
@@ -90,6 +109,7 @@ export default function TechStackBuilder() {
     if (!removedTech) return;
 
     const nextStack = selectedStackRef.current.filter((item) => item.id !== id);
+    localStorage.setItem('dev-stack', JSON.stringify(nextStack));
     selectedStackRef.current = nextStack;
     setSelectedStack(nextStack);
     toast.info(`${removedTech.name} removed from your stack.`);
@@ -98,6 +118,7 @@ export default function TechStackBuilder() {
   const handleRemoveAllFromStack = () => {
     if (selectedStackRef.current.length === 0) return;
 
+    localStorage.removeItem('dev-stack');
     selectedStackRef.current = [];
     setSelectedStack([]);
     toast.info('All technologies removed from your stack.');
