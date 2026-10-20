@@ -104,6 +104,11 @@ export default function TechStackBuilder() {
       return;
     }
 
+    if (selectedStackRef.current.some((item) => item.category === tech.category)) {
+      toast.warning(`Your stack already has a ${tech.category} technology.`);
+      return;
+    }
+
     const nextStack = [...selectedStackRef.current, tech];
     localStorage.setItem('dev-stack', JSON.stringify(nextStack));
     selectedStackRef.current = nextStack;
