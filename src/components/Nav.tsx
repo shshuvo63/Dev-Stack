@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 
 const Nav = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeLink, setActiveLink] = useState(window.location.hash || "#home");
     const menuButtonRef = useRef<HTMLButtonElement>(null);
     const navLinks = [
         { label: "Home", href: "#home" },
@@ -11,15 +10,6 @@ const Nav = () => {
         { label: "About", href: "#about" },
         { label: "Contact", href: "#contact" },
     ];
-
-    useEffect(() => {
-        const updateActiveLink = () => {
-            setActiveLink(window.location.hash || "#home");
-        };
-
-        window.addEventListener("hashchange", updateActiveLink);
-        return () => window.removeEventListener("hashchange", updateActiveLink);
-    }, []);
 
     useEffect(() => {
         if (!isMenuOpen) return;
@@ -66,8 +56,8 @@ const Nav = () => {
                     {navLinks.map((link) => (
                         <li key={link.href}>
                             <a
-                                aria-current={activeLink === link.href ? "page" : undefined}
-                                className={activeLink === link.href ? "text-[#DB2777]" : "transition-colors hover:text-[#DB2777]"}
+                                aria-current={link.href === "#home" ? "page" : undefined}
+                                className={link.href === "#home" ? "text-[#DB2777]" : "transition-colors hover:text-[#DB2777]"}
                                 href={link.href}
                             >
                                 {link.label}
@@ -92,9 +82,9 @@ const Nav = () => {
                     {navLinks.map((link) => (
                         <li key={link.href}>
                             <a
-                                aria-current={activeLink === link.href ? "page" : undefined}
+                                aria-current={link.href === "#home" ? "page" : undefined}
                                 className={`block rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-50 hover:text-[#DB2777] ${
-                                    activeLink === link.href ? "text-[#DB2777]" : "text-slate-600"
+                                    link.href === "#home" ? "text-[#DB2777]" : "text-slate-600"
                                 }`}
                                 href={link.href}
                                 onClick={() => setIsMenuOpen(false)}
