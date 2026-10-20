@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Nav = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [activeLink, setActiveLink] = useState(window.location.hash || "#home");
     const navLinks = [
         { label: "Home", href: "#home" },
         { label: "Technologies", href: "#technologies" },
@@ -9,6 +10,15 @@ const Nav = () => {
         { label: "About", href: "#about" },
         { label: "Contact", href: "#contact" },
     ];
+
+    useEffect(() => {
+        const updateActiveLink = () => {
+            setActiveLink(window.location.hash || "#home");
+        };
+
+        window.addEventListener("hashchange", updateActiveLink);
+        return () => window.removeEventListener("hashchange", updateActiveLink);
+    }, []);
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white">
@@ -37,9 +47,13 @@ const Nav = () => {
                 </a>
 
                 <ul className="hidden items-center gap-6 text-sm font-medium text-[#475569] md:flex" style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
-                    {navLinks.map((link, index) => (
+                    {navLinks.map((link) => (
                         <li key={link.href}>
-                            <a className={index === 0 ? "text-[#DB2777]" : "transition-colors hover:text-[#DB2777]"} href={link.href}>
+                            <a
+                                aria-current={activeLink === link.href ? "page" : undefined}
+                                className={activeLink === link.href ? "text-[#DB2777]" : "transition-colors hover:text-[#DB2777]"}
+                                href={link.href}
+                            >
                                 {link.label}
                             </a>
                         </li>
@@ -62,7 +76,10 @@ const Nav = () => {
                     {navLinks.map((link) => (
                         <li key={link.href}>
                             <a
-                                className="block rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#DB2777]"
+                                aria-current={activeLink === link.href ? "page" : undefined}
+                                className={`block rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-50 hover:text-[#DB2777] ${
+                                    activeLink === link.href ? "text-[#DB2777]" : "text-slate-600"
+                                }`}
                                 href={link.href}
                                 onClick={() => setIsMenuOpen(false)}
                             >
